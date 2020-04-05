@@ -1,0 +1,6 @@
+.clangd/
+.DS_Store
+bin/soundOnly.app/
+obj/
+compile_commands.json
+soundOnly.xcodeproj/
