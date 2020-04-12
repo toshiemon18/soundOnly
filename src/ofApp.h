@@ -13,7 +13,7 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 
-		void keyPressed(int key) {};
+		void keyPressed(int key);
 		void keyReleased(int key) {};
 		void mouseMoved(int x, int y) {};
 		void mouseDragged(int x, int y, int button) {};
@@ -37,7 +37,9 @@ class ofApp : public ofBaseApp{
         // variables
         ofTrueTypeFont northstar;
         ofColor labelColor = ofColor(200);
-        ofSoundStream mic;
+
+        ofSoundStream soundStream;
         int frameCount = 0;
         vector<float> buffer;
+        vector<float> rmsBuffer;
 };
