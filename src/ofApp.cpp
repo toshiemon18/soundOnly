@@ -76,6 +76,8 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key) {
     if (key == 's') { soundStream.start(); }
     else if (key == 'e') { soundStream.stop(); }
+
+    if (key == 'n') { isRenderBlockNoise = !isRenderBlockNoise; }
 }
 
 void ofApp::drawLabelCenter(string content) {
@@ -94,14 +96,16 @@ void ofApp::drawWhiteNoise() {
     // 8x8のノイズブロックを画面全体に描画する
     int w = ofGetWidth() / NOISE_BLOCK_W, h = ofGetHeight() / NOISE_BLOCK_H;
 
-    ofEnableAlphaBlending();
-    for (int i = 0; i < w; i++) {
-        for (int j = 0; j < h; j++) {
-            ofSetColor(ofColor(ofRandom(1.0) * 255, 6));
-            ofDrawRectangle(i * NOISE_BLOCK_W, j * NOISE_BLOCK_H, NOISE_BLOCK_W, NOISE_BLOCK_H);
+    if (isRenderBlockNoise) {
+        ofEnableAlphaBlending();
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                ofSetColor(ofColor(ofRandom(1.0) * 255, 6));
+                ofDrawRectangle(i * NOISE_BLOCK_W, j * NOISE_BLOCK_H, NOISE_BLOCK_W, NOISE_BLOCK_H);
+            }
         }
+        ofDisableAlphaBlending();
     }
-    ofDisableAlphaBlending();
 }
 
 void ofApp::audioIn(ofSoundBuffer & inputBuffer) {

@@ -37,6 +37,7 @@ class ofApp : public ofBaseApp{
         // variables
         ofTrueTypeFont northstar;
         ofColor labelColor = ofColor(200);
+        bool isRenderBlockNoise = true;
 
         ofSoundStream soundStream;
         int frameCount = 0;
