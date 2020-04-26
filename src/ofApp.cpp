@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include "ofAppRunner.h"
 #include "ofGraphics.h"
+#include "ofGraphicsBaseTypes.h"
 #include "ofRectangle.h"
 #include <atomic>
 
@@ -44,32 +45,14 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     drawLabelCenter("Sound Only");
     drawWhiteNoise();
-
-    ofPushStyle();
-        ofPushMatrix();
-        ofTranslate(ofGetWidth() / 2 - 256, 400, 0);
-
-        // ofSetColor(255);
-        // ofDrawBitmapString("Buffer", 4, 18);
-        //
-        // ofSetLineWidth(1);
-        // ofDrawRectangle(0, 0, 512, 200);
-
-        ofSetColor(245, 58, 135);
-        ofSetLineWidth(3);
-            ofBeginShape();
-            for (unsigned int i = 0; i < buffer.size(); i++) {
-                ofVertex(i*2, 100 - buffer[i] * 180.0f);
-            }
-            ofEndShape();
-        ofPopMatrix();
-    ofPopStyle();
+    drawAudioRMS();
 }
 
 //--------------------------------------------------------------
@@ -80,6 +63,26 @@ void ofApp::keyPressed(int key) {
     if (key == 'n') { isRenderBlockNoise = !isRenderBlockNoise; }
 }
 
+//--------------------------------------------------------------
+void ofApp::drawAudioRMS() {
+    ofPushStyle();
+        ofPushMatrix();
+            ofTranslate(ofGetWidth() / 2 - 256, 400, 0);
+
+            ofSetColor(245, 58, 135);
+            ofSetLineWidth(1);
+            // rmsBufferのサイズがRMS_BUFFER_MAX_SIZE を超えた場合は先頭を削除
+            ofNoFill();
+            ofBeginShape();
+                for (unsigned int i = 0; i < rmsBuffer.size(); i++) {
+                    ofCurveVertex(i*2, 100 - rmsBuffer[i] * 10000);
+                }
+            ofEndShape();
+        ofPopMatrix();
+    ofPopStyle();
+}
+
+//--------------------------------------------------------------
 void ofApp::drawLabelCenter(string content) {
     float contentW = northstar.stringWidth(content),
           contentH = northstar.stringHeight(content);
@@ -92,6 +95,7 @@ void ofApp::drawLabelCenter(string content) {
     ofPopStyle();
 }
 
+//--------------------------------------------------------------
 void ofApp::drawWhiteNoise() {
     // 8x8のノイズブロックを画面全体に描画する
     int w = ofGetWidth() / NOISE_BLOCK_W, h = ofGetHeight() / NOISE_BLOCK_H;
@@ -108,16 +112,21 @@ void ofApp::drawWhiteNoise() {
     }
 }
 
+//--------------------------------------------------------------
 void ofApp::audioIn(ofSoundBuffer & inputBuffer) {
     float currentVolume = 0.0;
     float numCounted = 0;
 
     for (size_t i = 0; i < inputBuffer.getNumFrames(); i++) {
         buffer[i] = inputBuffer[i] * 0.5;
-        currentVolume += pow(buffer[i], 2);
+        currentVolume += buffer[i] * buffer[i];
         numCounted++;
     }
 
     currentVolume /= (float)numCounted;
+    currentVolume = sqrt(currentVolume);
     rmsBuffer.push_back(currentVolume);
+    if (rmsBuffer.size() > RMS_BUFFER_MAX_SIZE) {
+        rmsBuffer.erase(rmsBuffer.begin());
+    }
 }

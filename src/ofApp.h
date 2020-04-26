@@ -26,6 +26,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg) {};
 
         // Own functions
+        void drawAudioRMS();
         void drawLabelCenter(string content);
         void drawWhiteNoise();
         void audioIn(ofSoundBuffer & inputBuffer);
@@ -40,7 +41,8 @@ class ofApp : public ofBaseApp{
         bool isRenderBlockNoise = true;
 
         ofSoundStream soundStream;
+        int RMS_BUFFER_MAX_SIZE = 256;
         int frameCount = 0;
         vector<float> buffer;
-        vector<float> rmsBuffer;
+        std::vector<float> rmsBuffer;
 };
